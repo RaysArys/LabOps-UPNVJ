@@ -1,4 +1,4 @@
-# LabFIK UPNVJ Trial
+# LabOps UPNVJ
 
 Aplikasi operasional laboratorium dengan frontend Vue, API NestJS, PostgreSQL, Keycloak, dan Mailpit.
 
