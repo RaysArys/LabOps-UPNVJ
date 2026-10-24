@@ -1,0 +1,90 @@
+<template>
+  <div class="app-shell">
+    <aside class="sidebar" :class="{ open: mobileOpen }">
+      <div class="brand">
+        <img src="/logo192.png" alt="UPNVJ" />
+        <div><strong>LabOps FIK</strong><span>UPN VETERAN JAKARTA</span></div>
+        <button class="icon-btn mobile-only" @click="mobileOpen = false">
+          ×
+        </button>
+      </div>
+      <div class="menu-label">MENU UTAMA</div>
+      <nav>
+        <RouterLink
+          v-for="item in menu"
+          :key="item.path"
+          :to="item.path"
+          @click="mobileOpen = false"
+          ><i>{{ item.icon }}</i
+          ><span>{{ item.label }}</span></RouterLink
+        >
+      </nav>
+      <div class="sidebar-foot">
+        <button class="icon-btn" title="Keluar" @click="auth.logout()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+            <path d="m17 16 4-4-4-4" />
+            <path d="M21 12H10" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+    <div
+      v-if="mobileOpen"
+      class="sidebar-backdrop"
+      @click="mobileOpen = false"
+    />
+    <main class="main-shell">
+      <header class="topbar">
+        <button class="icon-btn mobile-only" @click="mobileOpen = true">
+          ☰
+        </button>
+        <div>
+          <span class="crumb">LabOps FIK /</span><strong>{{ title }}</strong>
+        </div>
+        <div class="top-actions">
+          <div class="top-user">
+            <div>
+              <strong>{{ auth.user?.nama || roleName }}</strong
+              ><span>{{ auth.user?.email }}</span>
+            </div>
+            <span class="top-date">{{ today }}</span>
+          </div>
+        </div>
+      </header>
+      <section class="page-wrap"><RouterView /></section>
+    </main>
+  </div>
+</template>
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { RouterLink, RouterView, useRoute } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { menuByRole, roleLabel } from "../config/menu";
+const auth = useAuthStore(),
+  route = useRoute(),
+  mobileOpen = ref(false);
+const menu = computed(() => (auth.user ? menuByRole[auth.user.role] : [])),
+  roleName = computed(() =>
+    auth.user ? roleLabel[auth.user.role] : "Pengguna",
+  );
+const titles: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/assets":
+    auth.user?.role === "wakil_dekan" ? "Persetujuan aset" : "Master aset",
+  "/work-orders":
+    auth.user?.role === "wakil_dekan" ? "Laporan kerusakan" : "Work order",
+  "/stock-opname": "Stock opname",
+  "/stock-opname/history": "Riwayat Opname",
+  "/calibration": "Kalibrasi",
+  "/vendors": "Vendor",
+  "/users": "Pengguna",
+};
+const title = computed(() => titles[route.path] || "LabOps FIK");
+const today = new Intl.DateTimeFormat("id-ID", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date());
+</script>
