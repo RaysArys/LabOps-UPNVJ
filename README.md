@@ -42,13 +42,15 @@ Gunakan email akun uji dan `TRIAL_PASSWORD` untuk login. Jangan aktifkan `ALLOW_
 
 ## Tes
 
-Jalankan dari Git Bash, WSL, atau shell yang menyediakan Bash:
+Jalankan unit test backend dari PowerShell:
 
-```bash
-bash ./tests/run-all.sh
+```powershell
+cd backend
+npm.cmd test -- --runInBand
+npm.cmd test -- --runInBand --coverage
 ```
 
-Script menjalankan unit test, type-check, build, smoke test service, dan tes akses API. Lihat [docs/TEST_REPORT.md](docs/TEST_REPORT.md) untuk hasil uji.
+Perintah kedua membuat laporan HTML di `backend/coverage/lcov-report/index.html`. Untuk langkah black-box, skenario uji, dan format pencatatan hasil, lihat [panduan pengujian](docs/TESTING.md). Unit test ini bukan pengganti pengujian manual seluruh alur aplikasi.
 
 ## Catatan
 
