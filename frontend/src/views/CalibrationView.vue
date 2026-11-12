@@ -274,9 +274,14 @@
               >
                 <button
                   class="btn tiny danger"
-                  @click="openReview(log, log.hasil === 'tidak_lulus' ? 'tolak_teknis' : 'tolak_dokumen')"
+                  @click="openReview(log, 'tolak_dokumen')"
                 >
-                  Tolak</button
+                  Tolak Dokumen</button
+                ><button
+                  class="btn tiny danger ghost"
+                  @click="openReview(log, 'tolak_teknis')"
+                >
+                  Tolak Teknis</button
                 ><button
                   class="btn tiny primary"
                   @click="openReview(log, 'setujui')"
@@ -532,10 +537,22 @@
       @close="review = null"
       ><form @submit.prevent="submitReview">
         <label v-if="review.action !== 'setujui'"
-          >Alasan *<textarea v-model="reviewReason" rows="4" required />
+          >Alasan penolakan *<textarea
+            v-model="reviewReason"
+            rows="4"
+            required
+          />
         </label>
-        <p v-else class="confirm-text">
+        <p v-if="review.action === 'setujui'" class="confirm-text">
           Setujui hasil ini dan hitung jadwal kalibrasi berikutnya?
+        </p>
+        <p v-else-if="review.action === 'tolak_dokumen'" class="confirm-text">
+          Hasil ditolak karena dokumen. Jadwal akan dikembalikan ke Laboran
+          untuk kalibrasi ulang dan pencatatan hasil baru.
+        </p>
+        <p v-else class="confirm-text">
+          Hasil ditolak karena masalah teknis. Work Order akan dibuat otomatis
+          untuk ditangani Teknisi; kalibrasi ulang dilakukan setelah perbaikan.
         </p>
         <div class="modal-actions">
           <button type="button" class="btn ghost" @click="review = null">
@@ -715,7 +732,9 @@ const filtered = computed(() =>
 const reviewTitle = computed(() =>
   review.value?.action === "setujui"
     ? "Setujui hasil"
-    : "Tolak hasil",
+    : review.value?.action === "tolak_teknis"
+      ? "Tolak Teknis"
+      : "Tolak Dokumen",
 );
 const count = (s: CalibrationScheduleStatus) =>
   schedules.value.filter((x) => x.status_kalibrasi === s).length;

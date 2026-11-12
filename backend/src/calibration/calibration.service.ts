@@ -302,6 +302,15 @@ export class CalibrationService {
     }
 
     const schedule = await this.findSchedule(scheduleId);
+    if (
+      schedule.status_kalibrasi === JadwalStatus.MENUNGGU_PERBAIKAN ||
+      schedule.status_kalibrasi === JadwalStatus.MENUNGGU_PERSETUJUAN ||
+      schedule.status_kalibrasi === JadwalStatus.SELESAI
+    ) {
+      throw new BadRequestException(
+        'Jadwal belum dapat menerima hasil kalibrasi baru',
+      );
+    }
     const asset = await this.assetsService.findOne(schedule.asset_id);
 
     const inputs = dto.pengukuran ?? [];

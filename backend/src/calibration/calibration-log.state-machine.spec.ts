@@ -13,6 +13,21 @@ describe('Calibration log state machine', () => {
     );
   });
 
+  it('membedakan penolakan teknis dari penolakan dokumen', () => {
+    expect(
+      transitionCalibrationLog(
+        LogApprovalStatus.PENDING_APPROVAL,
+        'tolak_dokumen',
+      ),
+    ).toBe(LogApprovalStatus.REJECTED_DOKUMEN);
+    expect(
+      transitionCalibrationLog(
+        LogApprovalStatus.PENDING_APPROVAL,
+        'tolak_teknis',
+      ),
+    ).toBe(LogApprovalStatus.REJECTED_TEKNIS);
+  });
+
   it('menjadikan approved sebagai status akhir', () => {
     expect(() =>
       transitionCalibrationLog(LogApprovalStatus.APPROVED, 'revisi'),
